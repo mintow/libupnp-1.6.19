@@ -8,5 +8,8 @@
 config.log
 config.status
 Makefile
+tv_combo
+tv_ctrlpt
+tv_device
 
 
