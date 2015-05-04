@@ -278,7 +278,7 @@
  *
  * @{
  */
-#define AUTO_ADVERTISEMENT_TIME 30
+#define AUTO_ADVERTISEMENT_TIME 1
 /* @} */
 
 
