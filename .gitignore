@@ -1,0 +1,12 @@
+*.o
+*.lo
+.deps
+.dirstamp
+*.pc
+*.la
+.libs
+config.log
+config.status
+Makefile
+
+
