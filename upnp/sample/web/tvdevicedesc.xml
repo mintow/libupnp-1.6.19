@@ -31,6 +31,13 @@
         <eventSubURL>/upnp/event/tvpicture1</eventSubURL>
         <SCPDURL>/tvpictureSCPD.xml</SCPDURL>
       </service>
+      <service>
+	    <serviceType>urn:schemas-upnp-org:service:tvled:1</serviceType>
+        <serviceId>urn:upnp-org:serviceId:tvled1</serviceId>
+        <controlURL>/upnp/control/tvled1</controlURL>
+        <eventSubURL>/upnp/event/tvled1</eventSubURL>
+        <SCPDURL>/tvledSCPD.xml</SCPDURL>
+      </service>
     </serviceList>
    <presentationURL>/tvdevicepres.html</presentationURL>
 </device>

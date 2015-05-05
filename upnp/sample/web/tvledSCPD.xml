@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<scpd xmlns="urn:schemas-upnp-org:service-1-0">
+
+  <specVersion>
+    <major>1</major>
+    <minor>0</minor>
+  </specVersion>
+
+  <actionList>
+
+    <action>
+      <name>LedOn</name>
+      <argumentList>
+         <argument>
+           <retval />
+           <name>Led</name>
+           <relatedStateVariable>Led</relatedStateVariable>
+           <direction>out</direction>
+          </argument>
+      </argumentList>
+    </action>
+
+    <action>
+      <name>LedOff</name>    
+      <argumentList>
+         <argument>
+           <retval />
+           <name>Led</name>
+           <relatedStateVariable>Led</relatedStateVariable>
+           <direction>out</direction>
+          </argument>
+      </argumentList>
+    </action>
+
+  </actionList>
+
+  <serviceStateTable>
+
+    <stateVariable sendEvents="yes">
+      <name>Led</name>
+      <dataType>Boolean</dataType>
+      <defaultValue>0</defaultValue>
+    </stateVariable>
+
+  </serviceStateTable>
+
+</scpd>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -58,9 +58,10 @@ extern "C" {
 #include <stdarg.h>
 #include <stdio.h>
 
-#define TV_SERVICE_SERVCOUNT	2
+#define TV_SERVICE_SERVCOUNT	3
 #define TV_SERVICE_CONTROL	0
 #define TV_SERVICE_PICTURE	1
+#define TV_SERVICE_LED		2
 
 #define TV_CONTROL_VARCOUNT	3
 #define TV_CONTROL_POWER	0
@@ -72,6 +73,9 @@ extern "C" {
 #define TV_PICTURE_TINT		1
 #define TV_PICTURE_CONTRAST	2
 #define TV_PICTURE_BRIGHTNESS	3
+
+#define TV_LED_VARCOUNT   1
+#define TV_CONTROL_LED	0
 
 #define TV_MAX_VAL_LEN		5
 

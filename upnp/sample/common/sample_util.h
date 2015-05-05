@@ -56,7 +56,8 @@ extern "C" {
 	/*! Service types for tv services. */
 	const char *TvServiceType[] = {
 		"urn:schemas-upnp-org:service:tvcontrol:1",
-		"urn:schemas-upnp-org:service:tvpicture:1"
+		"urn:schemas-upnp-org:service:tvpicture:1",
+		"urn:schemas-upnp-org:service:tvled:1",
 	};
 #else /* SAMPLE_UTIL_C */
 	extern const char *TvServiceType[];

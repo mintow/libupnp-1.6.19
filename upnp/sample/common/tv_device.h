@@ -88,13 +88,15 @@ extern "C" {
 #define MIN_CHANNEL 1
 
 /*! Number of services. */
-#define TV_SERVICE_SERVCOUNT  2
+#define TV_SERVICE_SERVCOUNT  3
 
 /*! Index of control service */
 #define TV_SERVICE_CONTROL    0
 
 /*! Index of picture service */
 #define TV_SERVICE_PICTURE    1
+
+#define TV_SERVICE_LED    		2
 
 /*! Number of control variables */
 #define TV_CONTROL_VARCOUNT   3
@@ -122,6 +124,9 @@ extern "C" {
 
 /*! Index of brightness variable */
 #define TV_PICTURE_BRIGHTNESS 3
+
+#define TV_LED_VARCOUNT		1
+#define TV_CONTROL_LED		0
 
 /*! Max value length */
 #define TV_MAX_VAL_LEN 5
@@ -535,6 +540,9 @@ int TvDeviceStart(
  * \brief Stops the device. Uninitializes the sdk.
  */
 int TvDeviceStop(void);
+
+int TvLedTurnOn(IXML_Document * in,IXML_Document **out, const char **errorString);
+int TvLedTurnOff(IXML_Document * in,IXML_Document **out, const char **errorString);
 
 /*!
  * \brief Function that receives commands from the user at the command prompt

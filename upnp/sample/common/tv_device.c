@@ -63,11 +63,15 @@ const char *tvp_varname[] = { "Color", "Tint", "Contrast", "Brightness" };
 char tvp_varval[TV_PICTURE_VARCOUNT][TV_MAX_VAL_LEN];
 const char *tvp_varval_def[] = { "5", "5", "5", "5" };
 
+const char *tvl_varname[] = { "Led" };
+char tvl_varval[TV_LED_VARCOUNT][TV_MAX_VAL_LEN];
+const char *tvl_varval_def[] = { "0"};
+
 /*! The amount of time (in seconds) before advertisements will expire. */
 int default_advr_expire = 100;
 
 /*! Global structure for storing the state table for this device. */
-struct TvService tv_service_table[2];
+struct TvService tv_service_table[TV_SERVICE_SERVCOUNT];
 
 /*! Device handle supplied by UPnP SDK. */
 UpnpDevice_Handle device_handle = -1;
@@ -154,6 +158,18 @@ static int SetServiceTable(
 				VariableStrVal[i], tvp_varval_def[i]);
 		}
 		break;
+
+	case TV_SERVICE_LED:
+		out->VariableCount = TV_LED_VARCOUNT;
+		for (i = 0;
+		     i < tv_service_table[TV_SERVICE_LED].VariableCount;
+		     i++) {
+			tv_service_table[TV_SERVICE_LED].VariableName[i] = tvl_varname[i];
+			tv_service_table[TV_SERVICE_LED].VariableStrVal[i] = tvl_varval[i];
+			strcpy(tv_service_table[TV_SERVICE_LED].
+				VariableStrVal[i], tvl_varval_def[i]);
+		}
+		break;
 	default:
 		assert(0);
 	}
@@ -211,6 +227,12 @@ int SetActionTable(int serviceType, struct TvService *out)
 		out->actions[10] = TvDeviceIncreaseContrast;
 		out->actions[11] = TvDeviceDecreaseContrast;
 		return 1;
+	}else if (serviceType == TV_SERVICE_LED) {
+		out->ActionNames[0] = "LedOn";
+		out->actions[0] = TvLedTurnOn;
+		out->ActionNames[1] = "LedOff";
+		out->actions[1] = TvLedTurnOff;
+		out->ActionNames[2] = NULL;
 	}
 
 	return 0;
@@ -265,6 +287,21 @@ int TvDeviceStateTableInit(char *DescDocURL)
 	SetServiceTable(TV_SERVICE_PICTURE, udn, servid_pict,
 			TvServiceType[TV_SERVICE_PICTURE],
 			&tv_service_table[TV_SERVICE_PICTURE]);
+
+	/* Find the Tv Picture Service identifiers */
+	if (!SampleUtil_FindAndParseService(DescDoc, DescDocURL,
+						TvServiceType[TV_SERVICE_LED],
+						&servid_pict, &evnturl_pict,
+						&ctrlurl_pict)) {
+		SampleUtil_Print("TvDeviceStateTableInit -- Error: Could not find Service: %s\n",
+				 TvServiceType[TV_SERVICE_LED]);
+		ret = UPNP_E_INVALID_DESC;
+		goto error_handler;
+	}
+	/* set picture service table */
+	SetServiceTable(TV_SERVICE_LED, udn, servid_pict,
+			TvServiceType[TV_SERVICE_LED],
+			&tv_service_table[TV_SERVICE_LED]);
 
 error_handler:
 	/* clean up */
@@ -416,6 +453,10 @@ int TvDeviceHandleActionRequest(struct Upnp_Action_Request *ca_event)
 		   strcmp(serviceID, tv_service_table[TV_SERVICE_PICTURE].ServiceId) == 0) {
 		/* Request for action in the TvDevice Picture Service. */
 		service = TV_SERVICE_PICTURE;
+	} else if (strcmp(devUDN,       tv_service_table[TV_SERVICE_LED].UDN) == 0 &&
+		   strcmp(serviceID, tv_service_table[TV_SERVICE_LED].ServiceId) == 0) {
+		/* Request for action in the TvDevice Picture Service. */
+		service = TV_SERVICE_LED;
 	}
 	/* Find and call appropriate procedure based on action name.
 	 * Each action name has an associated procedure stored in the
@@ -776,6 +817,27 @@ int TvDeviceDecreaseVolume(IXML_Document * in, IXML_Document ** out,
 			   const char **errorString)
 {
 	return IncrementVolume(-1, in, out, errorString);
+}
+
+int TvLedTurnOn(IXML_Document * in,IXML_Document **out,
+	const char **errorString)
+{
+	(*out) = NULL;
+	(*errorString) = NULL;
+	printf("%s()%d ------------ \n", __FUNCTION__, __LINE__);
+	system("echo 1 > /sys/devices/platform/ss.0/led");
+	return UPNP_E_SUCCESS;
+}
+
+int TvLedTurnOff(IXML_Document * in,IXML_Document **out,
+	const char **errorString)
+{
+	(*out) = NULL;
+	(*errorString) = NULL;
+	printf("%s()%d ------------ \n", __FUNCTION__, __LINE__);
+
+	system("echo 0 > /sys/devices/platform/ss.0/led");
+	return UPNP_E_SUCCESS;
 }
 
 int TvDeviceSetColor(IXML_Document * in, IXML_Document ** out,
@@ -1404,9 +1466,8 @@ void *TvDeviceCommandLoop(void *args)
 			TvDeviceStop();
 			exit(0);
 		} else {
-			SampleUtil_Print("\n   Unknown command: %s\n\n", cmd);
-			SampleUtil_Print("   Valid Commands:\n"
-					 "     Exit\n\n");
+			SampleUtil_Print("Unknown command: %s\n", cmd);
+			SampleUtil_Print(" Valid Commands: Exit\n");
 		}
 	}
 

@@ -58,7 +58,7 @@ UpnpClient_Handle ctrlpt_handle = -1;
 const char TvDeviceType[] = "urn:schemas-upnp-org:device:tvdevice:1";
 
 /*! Service names.*/
-const char *TvServiceName[] = { "Control", "Picture" };
+const char *TvServiceName[] = { "Control", "Picture", "Led" };
 
 /*!
    Global arrays for storing variable names and counts for 
@@ -66,10 +66,11 @@ const char *TvServiceName[] = { "Control", "Picture" };
  */
 const char *TvVarName[TV_SERVICE_SERVCOUNT][TV_MAXVARS] = {
     {"Power", "Channel", "Volume", ""},
-    {"Color", "Tint", "Contrast", "Brightness"}
+    {"Color", "Tint", "Contrast", "Brightness"},
+	{"Led", "", "", ""}
 };
 char TvVarCount[TV_SERVICE_SERVCOUNT] =
-    { TV_CONTROL_VARCOUNT, TV_PICTURE_VARCOUNT };
+    { TV_CONTROL_VARCOUNT, TV_PICTURE_VARCOUNT, TV_LED_VARCOUNT};
 
 /*!
    Timeout to request during subscriptions 
@@ -429,6 +430,18 @@ int TvCtrlPointSendPowerOff(int devnum)
 		TV_SERVICE_CONTROL, devnum, "PowerOff", NULL, NULL, 0);
 }
 
+int TvCtrlPointSendLedOn(int devnum)
+{
+	return TvCtrlPointSendAction(
+		TV_SERVICE_LED, devnum, "LedOn", NULL, NULL, 0);
+}
+
+int TvCtrlPointSendLedOff(int devnum)
+{
+	return TvCtrlPointSendAction(
+		TV_SERVICE_LED, devnum, "LedOff", NULL, NULL, 0);
+}
+
 int TvCtrlPointSendSetChannel(int devnum, int channel)
 {
 	return TvCtrlPointSendActionNumericArg(
@@ -652,11 +665,12 @@ void TvCtrlPointAddDevice(
 	char *baseURL = NULL;
 	char *relURL = NULL;
 	char *UDN = NULL;
-	char *serviceId[TV_SERVICE_SERVCOUNT] = { NULL, NULL };
-	char *eventURL[TV_SERVICE_SERVCOUNT] = { NULL, NULL };
-	char *controlURL[TV_SERVICE_SERVCOUNT] = { NULL, NULL };
+	char *serviceId[TV_SERVICE_SERVCOUNT] = { NULL, NULL, NULL };
+	char *eventURL[TV_SERVICE_SERVCOUNT] = { NULL, NULL, NULL };
+	char *controlURL[TV_SERVICE_SERVCOUNT] = { NULL, NULL, NULL };
 	Upnp_SID eventSID[TV_SERVICE_SERVCOUNT];
 	int TimeOut[TV_SERVICE_SERVCOUNT] = {
+		default_timeout,
 		default_timeout,
 		default_timeout
 	};
@@ -1078,7 +1092,6 @@ int TvCtrlPointCallbackEventHandler(Upnp_EventType EventType, void *Event, void 
 	/* GENA Stuff */
 	case UPNP_EVENT_RECEIVED: {
 		struct Upnp_Event *e_event = (struct Upnp_Event *)Event;
-
 		TvCtrlPointHandleEvent(
 			e_event->Sid,
 			e_event->EventKey,
@@ -1397,6 +1410,8 @@ enum cmdloop_tvcmds {
 	PRTDEV,
 	LSTDEV,
 	REFRESH,
+	LEDON,
+	LEDOFF,
 	EXITCMD
 };
 
@@ -1433,6 +1448,8 @@ static struct cmdloop_commands cmdloop_cmdlist[] = {
 	{"PictAction",    PICTACTION,  2, "<devnum> <action (string)>"},
 	{"CtrlGetVar",    CTRLGETVAR,  2, "<devnum> <varname (string)>"},
 	{"PictGetVar",    PICTGETVAR,  2, "<devnum> <varname (string)>"},
+	{"LedOn", 	  LEDON,	   2, "<devnum>"},
+	{"LedOff",	  LEDOFF,	   2, "<devnum>"},
 	{"Exit", EXITCMD, 1, ""}
 };
 
@@ -1498,7 +1515,7 @@ int TvCtrlPointProcessCommand(char *cmdline)
 	}
 	switch (cmdnum) {
 	case PRTHELP:
-		TvCtrlPointPrintShortHelp();
+		TvCtrlPointPrintCommands();
 		break;
 	case PRTFULLHELP:
 		TvCtrlPointPrintLongHelp();
@@ -1570,6 +1587,13 @@ int TvCtrlPointProcessCommand(char *cmdline)
 	case REFRESH:
 		TvCtrlPointRefresh();
 		break;
+	case LEDON:
+		TvCtrlPointSendLedOn(arg1);
+		break;
+	case LEDOFF:
+		TvCtrlPointSendLedOff(arg1);
+		break;
+	
 	case EXITCMD:
 		rc = TvCtrlPointStop();
 		exit(rc);
