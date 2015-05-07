@@ -135,24 +135,14 @@ Upnp_Handle_Type GetHandleInfo(
 
 #define HandleLock() HandleWriteLock()
 
-
 #define HandleWriteLock()  \
-	UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__, "Trying a write lock"); \
-	ithread_rwlock_wrlock(&GlobalHndRWLock); \
-	UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__, "Write lock acquired");
-
+	ithread_rwlock_wrlock(&GlobalHndRWLock);
 
 #define HandleReadLock()  \
-	UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__, "Trying a read lock"); \
-	ithread_rwlock_rdlock(&GlobalHndRWLock); \
-	UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__, "Read lock acquired");
-
+	ithread_rwlock_rdlock(&GlobalHndRWLock);
 
 #define HandleUnlock() \
-	UpnpPrintf(UPNP_INFO, API,__FILE__, __LINE__, "Trying Unlock"); \
-	ithread_rwlock_unlock(&GlobalHndRWLock); \
-	UpnpPrintf(UPNP_INFO, API, __FILE__, __LINE__, "Unlocked rwlock");
-
+	ithread_rwlock_unlock(&GlobalHndRWLock);
 
 /*!
  * \brief Get client handle info.

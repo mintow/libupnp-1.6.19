@@ -1663,8 +1663,8 @@ int http_MakeMessage(membuffer *buf, int http_major_version,
 			/* C string */
 			s = (char *)va_arg(argp, char *);
 			assert(s);
-			UpnpPrintf(UPNP_ALL, HTTP, __FILE__, __LINE__,
-				   "Adding a string : %s\n", s);
+//			UpnpPrintf(UPNP_ALL, HTTP, __FILE__, __LINE__,
+//				   "Adding a string : %s\n", s);
 			if (membuffer_append(buf, s, strlen(s)))
 				goto error_handler;
 		} else if (c == 'K') {
@@ -1685,8 +1685,8 @@ int http_MakeMessage(membuffer *buf, int http_major_version,
 		} else if (c == 'b') {
 			/* mem buffer */
 			s = (char *)va_arg(argp, char *);
-			UpnpPrintf(UPNP_ALL, HTTP, __FILE__, __LINE__,
-				"Adding a char Buffer starting with: %c\n", (int)s[0]);
+//			UpnpPrintf(UPNP_ALL, HTTP, __FILE__, __LINE__,
+//				"Adding a char Buffer starting with: %c\n", s[0]);
 			assert(s);
 			length = (size_t) va_arg(argp, size_t);
 			if (membuffer_append(buf, s, length))

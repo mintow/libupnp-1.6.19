@@ -36,6 +36,9 @@
 
 #include "autoconfig.h"
 
+#ifdef _DEBUG
+	#define DEBUG 1
+#endif
 
 /*!
  *  \name Compile time configuration options
@@ -383,7 +386,7 @@
  *
  * @{
  */
-#define DEBUG_TARGET		1   
+#define DEBUG_TARGET	0
 /* @} */
 
 

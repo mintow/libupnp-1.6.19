@@ -182,17 +182,26 @@ void UpnpDisplayFileAndLine(FILE *fd, const char *DbgFileName, int DbgLineNo)
 	for (i = 0; i < NLINES; i++)
 		lines[i] = buf[i];
 	/* Put the debug lines in the buffer */
-	sprintf(buf[0], "DEBUG - THREAD ID: 0x%lX",
+	fprintf(fd, "T %lX, ",
 #ifdef WIN32
 		(unsigned long int)ithread_self().p
 #else
 		(unsigned long int)ithread_self()
 #endif
 	    );
-	if (DbgFileName)
-		sprintf(buf[1], "FILE: %s, LINE: %d", DbgFileName, DbgLineNo);
+	if (DbgFileName) {
+		const char *updir = NULL;
+		updir = strrchr(DbgFileName, (int)'/');
+		if (updir == NULL)
+			updir = DbgFileName;
+		else
+			updir++;
+
+		fprintf(fd, "%s, %d - ", updir, DbgLineNo);
+	}
+
 	/* Show the lines centered */
-	UpnpDisplayBanner(fd, lines, NLINES, NUMBER_OF_STARS);
+//	UpnpDisplayBanner(fd, lines, NLINES, NUMBER_OF_STARS);
 	fflush(fd);
 }
 
