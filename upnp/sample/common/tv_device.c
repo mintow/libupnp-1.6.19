@@ -1374,15 +1374,25 @@ int TvDeviceStart(char *ip_address, unsigned short port,
 	SampleUtil_Print("Initializing UPnP Sdk with\n"
 			 "\tipaddress = %s port = %u\n",
 			 ip_address ? ip_address : "{NULL}", port);
+#ifdef UPNP_ENABLE_IPV6
+	ret = UpnpInit2("eth0", port);
+#else
 	ret = UpnpInit(ip_address, port);
+#endif
 	if (ret != UPNP_E_SUCCESS) {
 		SampleUtil_Print("Error with UpnpInit -- %d\n", ret);
 		UpnpFinish();
 
 		return ret;
 	}
+
+#ifdef UPNP_ENABLE_IPV6
+	ip_address = UpnpGetServerIp6Address();
+	port = UpnpGetServerPort6();
+#else
 	ip_address = UpnpGetServerIpAddress();
 	port = UpnpGetServerPort();
+#endif
 	SampleUtil_Print("UPnP Initialized\n"
 			 "\tipaddress = %s port = %u\n",
 			 ip_address ? ip_address : "{NULL}", port);
@@ -1396,8 +1406,13 @@ int TvDeviceStart(char *ip_address, unsigned short port,
 	if (!web_dir_path) {
 		web_dir_path = DEFAULT_WEB_DIR;
 	}
+#ifdef UPNP_ENABLE_IPV6
+	snprintf(desc_doc_url, DESC_URL_SIZE, "http://[%s]:%d/%s", ip_address,
+		port, desc_doc_name);
+#else
 	snprintf(desc_doc_url, DESC_URL_SIZE, "http://%s:%d/%s", ip_address,
-		 port, desc_doc_name);
+		port, desc_doc_name);
+#endif
 	SampleUtil_Print("Specifying the webserver root directory -- %s\n",
 			 web_dir_path);
 	ret = UpnpSetWebServerRootDir(web_dir_path);
@@ -1411,8 +1426,13 @@ int TvDeviceStart(char *ip_address, unsigned short port,
 	}
 	SampleUtil_Print("Registering the RootDevice\n"
 			 "\t with desc_doc_url: %s\n", desc_doc_url);
+#ifdef UPNP_ENABLE_IPV6
+	ret = UpnpRegisterRootDevice3(desc_doc_url, TvDeviceCallbackEventHandler,
+				     &device_handle, &device_handle, AF_INET6);
+#else
 	ret = UpnpRegisterRootDevice(desc_doc_url, TvDeviceCallbackEventHandler,
-				     &device_handle, &device_handle);
+				 &device_handle, &device_handle);
+#endif
 	if (ret != UPNP_E_SUCCESS) {
 		SampleUtil_Print("Error registering the rootdevice : %d\n",
 				 ret);

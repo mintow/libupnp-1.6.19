@@ -995,7 +995,7 @@ static int create_ssdp_sock_v6(
 		goto error_handler;
 	}
 	memset((void *)&ssdpMcastAddr, 0, sizeof(ssdpMcastAddr));
-	ssdpMcastAddr.ipv6mr_interface = gIF_INDEX;
+//	ssdpMcastAddr.ipv6mr_interface = gIF_INDEX;
 	inet_pton(AF_INET6, SSDP_IPV6_LINKLOCAL,
 		  &ssdpMcastAddr.ipv6mr_multiaddr);
 	ret = setsockopt(*ssdpSock, IPPROTO_IPV6, IPV6_JOIN_GROUP,
@@ -1003,7 +1003,8 @@ static int create_ssdp_sock_v6(
 	if (ret == -1) {
 		strerror_r(errno, errorBuffer, ERROR_BUFFER_LEN);
 		UpnpPrintf(UPNP_CRITICAL, SSDP, __FILE__, __LINE__,
-			   "Error in setsockopt() IPV6_JOIN_GROUP (join multicast group): %s\n",
+			   "Error in setsockopt() IPV6_JOIN_GROUP (join multicast group %s): %s\n",
+			   (char *)&ssdpMcastAddr.ipv6mr_multiaddr,
 			   errorBuffer);
 		ret = UPNP_E_SOCKET_ERROR;
 		goto error_handler;

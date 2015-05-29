@@ -1235,8 +1235,11 @@ int TvCtrlPointStart(print_string printFunctionPtr, state_update updateFunctionP
 	SampleUtil_Print("Initializing UPnP Sdk with\n"
 			 "\tipaddress = %s port = %u\n",
 			 ip_address ? ip_address : "{NULL}", port);
-
+#ifdef UPNP_ENABLE_IPV6
+	rc = UpnpInit2("eth0", port);
+#else
 	rc = UpnpInit(ip_address, port);
+#endif
 	if (rc != UPNP_E_SUCCESS) {
 		SampleUtil_Print("WinCEStart: UpnpInit() Error: %d\n", rc);
 		if (!combo) {
@@ -1245,12 +1248,22 @@ int TvCtrlPointStart(print_string printFunctionPtr, state_update updateFunctionP
 			return TV_ERROR;
 		}
 	}
+
+#ifdef UPNP_ENABLE_IPV6
+	if (!ip_address) {
+		ip_address = UpnpGetServerIp6Address();
+	}
+	if (!port) {
+		port = UpnpGetServerPort6();
+	}
+#else
 	if (!ip_address) {
 		ip_address = UpnpGetServerIpAddress();
 	}
 	if (!port) {
 		port = UpnpGetServerPort();
 	}
+#endif
 
 	SampleUtil_Print("UPnP Initialized\n"
 			 "\tipaddress = %s port = %u\n",
