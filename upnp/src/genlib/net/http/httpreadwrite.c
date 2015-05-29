@@ -706,7 +706,7 @@ int http_Download( IN const char *url_str,
 		return ret_code;
 	}
 	UpnpPrintf(UPNP_INFO, HTTP, __FILE__, __LINE__,
-		   "HTTP Buffer:\n%s\n" "----------END--------\n", request.buf);
+		   "HTTP Buffer:\n--------START--------\n%s--------END--------\n\n", request.buf);
 	/* get doc msg */
 	ret_code =
 	    http_RequestAndResponse(&url, request.buf, request.length,

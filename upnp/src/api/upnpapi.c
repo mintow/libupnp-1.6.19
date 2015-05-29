@@ -553,7 +553,7 @@ void PrintThreadPoolStats(
 	ThreadPoolStats stats;
 	ThreadPoolGetStats(tp, &stats);
 	UpnpPrintf(UPNP_INFO, API, DbgFileName, DbgLineNo,
-		"%s\n"
+		"\n%s\n"
 		"High Jobs pending: %d\n"
 		"Med Jobs Pending: %d\n"
 		"Low Jobs Pending: %d\n"
