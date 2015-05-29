@@ -127,7 +127,7 @@
 #define UPNP_ENABLE_BLOCKING_TCP_CONNECTIONS 1
 
 /* see upnpconfig.h */
-/* #undef UPNP_ENABLE_IPV6 */
+#define UPNP_ENABLE_IPV6 1
 
 /* see upnpconfig.h */
 #define UPNP_ENABLE_NOTIFICATION_REORDERING 1

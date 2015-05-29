@@ -126,7 +126,7 @@
 
 /** Defined to 1 if the library has been compiled with ipv6 support
  *  (i.e. configure --enable-ipv6) */
-/* #undef UPNP_ENABLE_IPV6 */
+#define UPNP_ENABLE_IPV6 1
 
 /** Defined to 1 if the library has been compiled with unspecified SERVER
  * header (i.e. configure --enable-unspecified_server) */
